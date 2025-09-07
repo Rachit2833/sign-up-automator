@@ -2,7 +2,8 @@ import puppeteer from "puppeteer";
 
 const browser = await puppeteer.launch({ headless: false });
 const page = await browser.newPage();
-
+const email =  "abc123@gmail.com"
+const password ="MySecurePass123!"
 await page.goto("https://identity.axxessweb.com/login", {
   waitUntil: "networkidle2",
 });
@@ -10,7 +11,7 @@ await page.goto("https://identity.axxessweb.com/login", {
 
 await page.type(
   'input[placeholder="Email Address or Domain"][autocomplete="username"]',
-  "abc123@gmail.com",
+  email,
   { delay: 50 }
 );
 
@@ -26,7 +27,7 @@ await page.waitForSelector('input[type="password"][placeholder="Password"]', {
 
 await page.type(
   'input[type="password"][placeholder="Password"]',
-  "MySecurePass123!",
+   password,
   { delay: 50 }
 );
 
