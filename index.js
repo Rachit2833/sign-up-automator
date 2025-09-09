@@ -1,62 +1,47 @@
 import puppeteer from "puppeteer";
+import fs from "fs";
 
-const email = "pranavmanpuria@gmail.com";
-const password = "MySecurePass123!";
+const USER_DATA_DIR = "./axxess_user_data"; // optional
+const COOKIES_PATH = "./cookies.json";
 
-const browser = await puppeteer.launch({ headless: false });
-const page = await browser.newPage();
+(async () => {
+    const browser = await puppeteer.launch({
+        headless: false,
+        userDataDir: USER_DATA_DIR,
+        args: [
+            "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
+            "--disable-web-security",
+            "--disable-site-isolation-trials",
+        ],
+    });
 
-try {
-  console.log("🌐 Navigating to login page...");
-  await page.goto("https://identity.axxessweb.com/login", {
-    waitUntil: "networkidle2",
-  });
+    const page = await browser.newPage();
+    await page.goto("https://central.axxessweb.com/help", { waitUntil: "networkidle2" });
 
-  console.log("✉️ Typing email...");
-  await page.type(
-    'input[placeholder="Email Address or Domain"][autocomplete="username"]',
-    email,
-    { delay: 50 } // ⌛ delay per keystroke
-  );
+    // Load cookies
+    const cookies = JSON.parse(fs.readFileSync(COOKIES_PATH, "utf-8"));
+    await page.setCookie(...cookies);
+    console.log("🍪 All cookies loaded from cookie.json");
 
-  console.log("➡️ Clicking Next...");
-  await page.waitForSelector("button.btn.btn-axxess.btn-sm.mt-3:not([disabled])");
-  await page.click("button.btn.btn-axxess.btn-sm.mt-3");
+    // Reload to apply cookies
+    await page.reload({ waitUntil: "networkidle2" });
+    console.log("✅ Logged in using cookies");
 
-  console.log("🔑 Waiting for password field...");
-  try {
-    await page.waitForSelector(
-      'input[type="password"][placeholder="Password"]',
-      { visible: true, timeout: 10000 }
+    // Navigate to dashboard
+
+    const homeHealth = await page.waitForSelector(
+        '.au-target.btn.btn-axxess.btn-block.Home.Health.font-size-base',
+        { visible: true, timeout: 10000 }
     );
-  } catch {
-    throw new Error(
-      `Login failed: Password field not found. Email may be invalid. Used: ${email}`
-    );
-  }
+    await homeHealth.click();
+    console.log("✅ HNTS button clicked!");
 
-  console.log("🔒 Typing password...");
-  await page.type(
-    'input[type="password"][placeholder="Password"]',
-    password,
-    { delay: 50 } // ⌛ delay per keystroke
-  );
+    const patient = await page.waitForSelector('.d-none.d-xl-block.fas.fa-user', { visible: true, timeout: 10000 });
+    await patient.click();
+    console.log("✅ Patient icon clicked!");
+    const patientCharts = await page.waitForSelector('ul.menu-list.right-list div.menu-item:has-text("Patient Charts")', { visible: true, timeout: 10000 });
+    await patientCharts.click();
+    console.log("✅ Patient Charts clicked!");
 
-  console.log("🔓 Clicking Login...");
-  await page.waitForSelector("button.btn.btn-axxess.btn-sm.mt-3:not([disabled])");
-  await page.click("button.btn.btn-axxess.btn-sm.mt-3");
 
-  console.log("📄 Waiting for agreement screen...");
-  const testOk = await page.waitForSelector("#btn_ok", { timeout: 10000 });
-  await testOk.click();
-
-  console.log("📊 Waiting for dashboard...");
-  await page.waitForNavigation({ waitUntil: "networkidle2" });
-
-  console.log("✅ Test ran successfully");
-} catch (err) {
-  console.error("❌ " + err.message);
-} finally {
-  console.log("🛑 Closing browser...");
-  await browser.close();
-}
+})();
