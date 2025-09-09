@@ -36,7 +36,7 @@ const COOKIES_PATH = "./cookies.json";
     await homeHealth.click();
     console.log("✅ HNTS button clicked!");
 
-    const patient = await page.waitForSelector('.d-none.d-xl-block.fas.fa-user', { visible: true, timeout: 10000 });
+    const patient = await page.waitForSelector('.d-none.d-xl-block.fas.fa-user', { visible: true, timeout: 100000 });
     await patient.click();
     console.log("✅ Patient icon clicked!");
     const patientCharts = await page.waitForSelector('ul.menu-list.right-list div.menu-item:has-text("Patient Charts")', { visible: true, timeout: 10000 });
