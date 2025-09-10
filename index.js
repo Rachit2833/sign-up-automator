@@ -31,7 +31,7 @@ const COOKIES_PATH = "./cookies.json";
 
     const homeHealth = await page.waitForSelector(
         '.au-target.btn.btn-axxess.btn-block.Home.Health.font-size-base',
-        { visible: true, timeout: 10000 }
+        { visible: true, timeout: 100000 }
     );
     await homeHealth.click();
     console.log("✅ HNTS button clicked!");
@@ -39,7 +39,7 @@ const COOKIES_PATH = "./cookies.json";
     const patient = await page.waitForSelector('.d-none.d-xl-block.fas.fa-user', { visible: true, timeout: 100000 });
     await patient.click();
     console.log("✅ Patient icon clicked!");
-    const patientCharts = await page.waitForSelector('ul.menu-list.right-list div.menu-item:has-text("Patient Charts")', { visible: true, timeout: 10000 });
+    const patientCharts = await page.waitForSelector('ul.menu-list.right-list div.menu-item:has-text("Patient Charts")', { visible: true, timeout: 100000 });
     await patientCharts.click();
     console.log("✅ Patient Charts clicked!");
 
