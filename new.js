@@ -3,11 +3,12 @@ import fs from 'fs';
 import path from 'path';
 
 const COOKIES_PATH = path.resolve('./cookies.json');
+const Browser_ID ='cf9f6a30-2b59-479b-bcac-40fa88d58038'
 
 async function runPuppeteer() {
   try {
     const wsUrl =
-      'ws://127.0.0.1:9222/devtools/browser/cf9f6a30-2b59-479b-bcac-40fa88d58038';
+      `ws://127.0.0.1:9222/devtools/browser/${Browser_ID}`;
     const browser = await puppeteer.connect({ browserWSEndpoint: wsUrl });
 
     const page = await browser.newPage();
